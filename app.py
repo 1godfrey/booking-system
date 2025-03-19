@@ -31,10 +31,14 @@ def send_email(to_email, subject, body):
     msg['From'] = sender_email
     msg['To'] = to_email
 
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, to_email, msg.as_string())
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, to_email, msg.as_string())
+        print(f"Email sent to {to_email}")
+    except Exception as email:
+        print(f"Failed to send email: {email}")
 
 # !!!!!!!!!!!  DEFINE THE ENV VARIABLES !!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -45,12 +49,15 @@ def send_sms(to_phone, message):
     twilio_phone_number = os.getenv('TWILIO_PHONE_NUMBER')
     client = Client(account_sid, auth_token)
 
-    message = client.messages.create(
-        body=message,
-        from_=twilio_phone_number,
-        to=to_phone
-    )
-    print(f"SMS sent to {to_phone}: {message.sid}")
+    try:
+        message = client.messages.create(
+            body=message,
+            from_=twilio_phone_number,
+            to=to_phone
+        )
+        print(f"SMS sent to {to_phone}: {message.sid}")
+    except Exception as esms:
+        print(f"Failed to send email: {esms}")
 
 # Booking route
 @app.route('/book', methods=['POST'])
