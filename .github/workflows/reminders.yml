@@ -1,0 +1,26 @@
+name: Send Appointment Reminders
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # Runs every day at 9 AM
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sqlite3 smtplib twilio
+
+      - name: Run reminder script
+        run: |
+          python send_reminders.py
