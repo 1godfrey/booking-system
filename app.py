@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import sqlite3
 import datetime
-import smtplib
+import smtplib, os
 from email.mime.text import MIMEText
 from twilio.rest import Client
 
@@ -24,8 +24,8 @@ def init_db():
 
 # Send email function
 def send_email(to_email, subject, body):
-    sender_email = "your_email@example.com"
-    sender_password = "your_email_password"
+    sender_email = os.getenv('EMAIL_USER')
+    sender_password = os.getenv('EMAIL_PASSWORD')
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = sender_email
@@ -36,17 +36,21 @@ def send_email(to_email, subject, body):
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, to_email, msg.as_string())
 
+# !!!!!!!!!!!  DEFINE THE ENV VARIABLES !!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Send SMS function (using Twilio)
 def send_sms(to_phone, message):
-    account_sid = 'your_twilio_account_sid'
-    auth_token = 'your_twilio_auth_token'
+    account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+    auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+    twilio_phone_number = os.getenv('TWILIO_PHONE_NUMBER')
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
         body=message,
-        from_='+your_twilio_phone_number',
+        from_=twilio_phone_number,
         to=to_phone
     )
+    print(f"SMS sent to {to_phone}: {message.sid}")
 
 # Booking route
 @app.route('/book', methods=['POST'])
