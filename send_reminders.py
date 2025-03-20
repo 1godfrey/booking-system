@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, os
 from datetime import datetime, timedelta
 from twilio.rest import Client
 
@@ -12,15 +12,15 @@ c.execute("SELECT name, phone, service, time FROM bookings WHERE date = ?", (tom
 appointments = c.fetchall()
 
 # Send SMS reminders
-account_sid = 'your_twilio_account_sid'
-auth_token = 'your_twilio_auth_token'
+account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+auth_token = os.getenv('TWILIO_AUTH_TOKEN')
 client = Client(account_sid, auth_token)
 
 for name, phone, service, time in appointments:
     message = f"Hi {name}, this is a reminder for your {service} appointment tomorrow at {time}."
     client.messages.create(
         body=message,
-        from_='+your_twilio_phone_number',
+        from_= os.getenv('TWILIO_PHONE_NUMBER'),
         to=phone
     )
 

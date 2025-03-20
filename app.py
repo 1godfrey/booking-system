@@ -57,7 +57,7 @@ def send_sms(to_phone, message):
         )
         print(f"SMS sent to {to_phone}: {message.sid}")
     except Exception as esms:
-        print(f"Failed to send email: {esms}")
+        print(f"Failed to send text: {esms}")
 
 # Booking route
 @app.route('/book', methods=['POST'])
