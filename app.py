@@ -92,6 +92,16 @@ def book_appointment():
 def home():
     return render_template('index.html')
 
+# Bookigns route
+@app.route('/bookings')
+def view_bookings():
+    conn = sqlite3.connect('bookings.db')
+    c = conn.cursor()
+    c.execute("SELECT * FROM bookings")
+    bookings = c.fetchall()
+    conn.close()
+    return jsonify(bookings)
+
 if __name__ == '__main__':
     init_db()  # Initialize the database
     port = int(os.environ.get('PORT', 5000))  # Use Render's PORT or default to 5000
